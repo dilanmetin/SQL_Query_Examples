@@ -1,10 +1,10 @@
---Tablodaki tüm verileri sorgulamak
+--Tablodaki tÃ¼m verileri sorgulamak
 SELECT * FROM dbo.Products;
 
---Tablodaki belirli kolonları sorgulamak
+--Tablodaki belirli kolonlarÃ½ sorgulamak
 SELECT ProductName, UnitPrice FROM dbo.Products;
 
---Where ile Tabloda istenilen filtreye göre veri çekmek 
+--Where ile Tabloda istenilen filtreye gÃ¶re veri Ã§ekmek 
 SELECT * FROM dbo.Employees
 WHERE title = 'Sales Representative' ;
 
@@ -13,7 +13,7 @@ SELECT * FROM Categories
 WHERE CategoryName NOT LIKE 'Beverages';
 
 
---And ve Or Kullanımı( Ve / Veya)
+--And ve Or KullanÃ½mÃ½( Ve / Veya)
 
 
 SELECT * FROM dbo.Products
@@ -25,13 +25,13 @@ SELECT * FROM dbo.Products
 WHERE CategoryID='1' 
 AND  SupplierID='1'  ;
 
---Verileri A'dan Z'ye, Z'den-A'ya, Büyükten küçüğe, Küçükten büyüğe sıralamak
+--Verileri A'dan Z'ye, Z'den-A'ya, BÃ¼yÃ¼kten kÃ¼Ã§Ã¼Ã°e, KÃ¼Ã§Ã¼kten bÃ¼yÃ¼Ã°e sÃ½ralamak
 SELECT ProductName, UnitPrice FROM dbo.Products
 ORDER BY ProductName ASC;
 SELECT ProductName, UnitPrice FROM dbo.Products
 ORDER BY UnitPrice DESC;
 
---Count kullanımı(Sayma)
+--Count kullanÃ½mÃ½(Sayma)
 SELECT ProductID,ProductName,UnitPrice
 FROM Products
 WHERE UnitPrice > 17;
@@ -42,23 +42,36 @@ FROM Suppliers
 GROUP BY Country;
 
 --DISTINCT
---Tablodaki kolonlarda tekrar eden verilerden yalnızca birinin gösterilmesi için kullanılır.
+--Tablodaki kolonlarda tekrar eden verilerden yalnÃ½zca birinin gÃ¶sterilmesi iÃ§in kullanÃ½lÃ½r.
 SELECT COUNT (DISTINCT Country)
 FROM Suppliers;
 
---İçeren kelimeye göre filtreleme
+--ÃÃ§eren kelimeye gÃ¶re filtreleme
 SELECT * FROM Products 
 WHERE ProductName LIKE  '%Pa%';
 
---Sum kullanımı(Toplam)
-SELECT OrderId, SUM(UnitPrice) AS TotalPrice
-FROM [Order Details] 
-GROUP BY OrderID;
+--Sum kullanÃ½mÃ½(Toplam)
+--Productid=31 olan Ã¼rÃ¼n toplam kaÃ§ adet satÄ±lmÄ±ÅŸtÄ±r
+SELECT  SUM(Quantity) as Total_Quantity
+FROM [Order Details] WHERE ProductID='1'
 
---Left join 
-SELECT OrderId,[Order Details].UnitPrice * Quantity  as Total_Price, Products.ProductName 
-FROM [Order Details]
-LEFT JOIN Products ON [Order Details].ProductID= Products.ProductID;
+--Hangi orderdan toplam ne kadar tutarda sipariÅŸ yapÄ±lmÄ±ÅŸtÄ±r
+select OrderID, SUM(UnitPrice*Quantity) as Total_Price from [Order Details]
+GROUP BY OrderID
+
+--Left joinÂ 
+--Her Ã§alÄ±ÅŸan tarafÄ±ndan yapÄ±lan sipariÅŸleri listeleyelim
+SELECT Employees.EmployeeID, Employees.FirstName, Employees.LastName, Orders.OrderID
+FROM  Employees
+LEFT JOIN  Orders ON Employees.EmployeeID = Orders.EmployeeID
+ORDER BY  Employees.EmployeeID;
+
+--Ã‡alÄ±ÅŸanlarÄ±n toplam kaÃ§ adet satÄ±ÅŸ yaptÄ±ÄŸÄ±na bakalÄ±m
+SELECT Employees.FirstName, Employees.LastName, Count(OrderID) AS Order_Count
+FROM Employees
+LEFT JOIN  Orders ON Employees.EmployeeID = Orders.EmployeeID
+GROUP BY Employees.FirstName, Employees.LastName
+ORDER BY Order_Count DESC
 
 --Right join
 SELECT Customers.CustomerID,CompanyName, Orders.OrderID
